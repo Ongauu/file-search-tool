@@ -1,6 +1,7 @@
 package com.crimson.fileSearch.exception;
 
 import com.crimson.fileSearch.dto.response.ApiError;
+import com.crimson.fileSearch.service.MinioStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

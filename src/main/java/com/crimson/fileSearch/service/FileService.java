@@ -30,7 +30,7 @@ public class FileService {
     public FileResponse upload(UUID userId, UUID folderId, MultipartFile multipartFile) {
         String filename = sanitizeFilename(multipartFile.getOriginalFilename());
 
-        if (fileRepository.existsByOwnerIdAndFolderIdAndFilenameAndDeletedAtIsNull(userId, folderId, filename)) {
+        if (fileRepository.existsByUserIdAndFolderIdAndFilenameAndDeletedAtIsNull(userId, folderId, filename)) {
             throw new ConflictException("A file named '" + filename + "' already exists in this folder");
         }
 
@@ -82,7 +82,7 @@ public class FileService {
         String sanitized = sanitizeFilename(newFilename);
 
         if (!sanitized.equalsIgnoreCase(file.getFilename())
-                && fileRepository.existsByOwnerIdAndFolderIdAndFilenameAndDeletedAtIsNull(userId, file.getFolderId(), sanitized)) {
+                && fileRepository.existsByUserIdAndFolderIdAndFilenameAndDeletedAtIsNull(userId, file.getFolderId(), sanitized)) {
             throw new ConflictException("A file named '" + sanitized + "' already exists in this folder");
         }
 

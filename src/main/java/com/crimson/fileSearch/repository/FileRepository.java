@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface FileRepository extends JpaRepository<FileEntity, UUID>, JpaSpecificationExecutor<FileEntity> {
     Optional<FileEntity> findByIdAndOwnerIdAndDeletedAtIsNull(UUID id, UUID ownerId);
 
-    boolean existsByOwnerIdAndFolderIdAndFilenameAndDeletedAtIsNull(UUID ownerId, UUID folderId, String filename);
+    boolean existsByUserIdAndFolderIdAndFilenameAndDeletedAtIsNull(UUID ownerId, UUID folderId, String filename);
 
     @Query(value = """
             SELECT f.* FROM files f

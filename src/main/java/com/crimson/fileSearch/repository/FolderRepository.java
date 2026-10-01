@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface FolderRepository extends JpaRepository<Folder, UUID> {
-    Optional<Folder> findByIdAndUserId(UUID id, UUID userId);
+    Optional<Folder> findByIdAndUserId(UUID id, Long userId);
 
-    List<Folder> findByUserIdAndParentId(UUID userId, UUID parentId);
+    List<Folder> findByUserIdAndParentId(Long userId, UUID parentId);
 
-    boolean existByUserIdAndParentIdAndName(UUID userId, UUID parentId, String name);
+    boolean existsByUserIdAndParentIdAndName(Long userId, UUID parentId, String name);
 }

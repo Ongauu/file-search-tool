@@ -6,15 +6,13 @@ import com.crimson.fileSearch.dto.request.RegisterRequest;
 import com.crimson.fileSearch.dto.response.AuthResponse;
 import com.crimson.fileSearch.dto.response.MessageResponse;
 import com.crimson.fileSearch.dto.response.UserResponse;
+import com.crimson.fileSearch.security.UserDetailsImpl;
 import com.crimson.fileSearch.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,8 +45,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<MessageResponse> logout(Authentication authentication) {
-        authService.logout(authentication.getName());
+    public ResponseEntity<MessageResponse> logout(@AuthenticationPrincipal UserDetailsImpl user) {
+        authService.logout(user.getUsername());
         return ResponseEntity.ok(new MessageResponse("Logged out successfully"));
     }
 }

@@ -19,13 +19,13 @@ public class FolderService {
     private final FolderRepository folderRepository;
 
     @Transactional
-    public FolderResponse create(UUID userId, CreateFolderRequest request){
+    public FolderResponse create(Long userId, CreateFolderRequest request){
         if(request.getParentId() != null){
             folderRepository.findByIdAndUserId(request.getParentId(), userId)
                     .orElseThrow(() -> new ResourceNotFoundException("parent folder not found: " + request.getParentId()));
         }
 
-        if(folderRepository.existByUserIdAndParentIdAndName(userId, request.getParentId(), request.getName())){
+        if(folderRepository.existsByUserIdAndParentIdAndName(userId, request.getParentId(), request.getName())){
             throw new ConflictException("a folder named'" + request.getName() + "' already exists");
         }
 
@@ -38,15 +38,37 @@ public class FolderService {
         return toResponse(folder);
     }
 
-    public List<FolderResponse> list(UUID userId, UUID parentId){
+    @Transactional
+    public FolderResponse rename(Long userId, UUID folderId, String newName) {
+        Folder folder = getOwnedFolder(userId, folderId);
+        String name = newName.trim();
+        if (!name.equals(folder.getName())
+                && folderRepository.existsByUserIdAndParentIdAndName(userId, folder.getParentId(), name)) {
+            throw new ConflictException("a folder named '" + name + "' already exists");
+        }
+        folder.setName(name);
+        folderRepository.save(folder);
+        return toResponse(folder);
+    }
+
+    @Transactional
+    public void delete(Long userId, UUID folderId) {
+        Folder folder = getOwnedFolder(userId, folderId);
+        folderRepository.delete(folder);
+    }
+
+    public List<FolderResponse> list(Long userId, UUID parentId){
         return folderRepository.findByUserIdAndParentId(userId, parentId).stream()
                 .map(this::toResponse)
                 .toList();
     }
 
-    public FolderResponse get(UUID userId, UUID folderId){
+    public FolderResponse get(Long userId, UUID folderId){
+        return toResponse(getOwnedFolder(userId, folderId));
+    }
+
+    private Folder getOwnedFolder(Long userId, UUID folderId) {
         return folderRepository.findByIdAndUserId(folderId, userId)
-                .map(this::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("folder not found: " + folderId));
     }
 

@@ -1,19 +1,19 @@
 CREATE TABLE folders (
      id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-     user_id        UUID NOT NULL,
+     user_id         BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
      parent_id       UUID REFERENCES folders(id) ON DELETE CASCADE,
      name            VARCHAR(255) NOT NULL,
      created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
      updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
-     CONSTRAINT uq_folder_name_per_parent UNIQUE (owner_id, parent_id, name)
+     CONSTRAINT uq_folder_name_per_parent UNIQUE (user_id, parent_id, name)
 );
 
-CREATE INDEX idx_folders_owner ON folders(owner_id);
+CREATE INDEX idx_folders_user ON folders(user_id);
 CREATE INDEX idx_folders_parent ON folders(parent_id);
 
 CREATE TABLE files (
     id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id   UUID NOT NULL,
+    user_id   BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     folder_id  UUID REFERENCES folders(id) ON DELETE SET NULL,
     filename  VARCHAR(512) NOT NULL,
     content_type  VARCHAR(255),

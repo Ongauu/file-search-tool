@@ -12,13 +12,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface FileRepository extends JpaRepository<FileEntity, UUID>, JpaSpecificationExecutor<FileEntity> {
-    Optional<FileEntity> findByIdAndOwnerIdAndDeletedAtIsNull(UUID id, UUID ownerId);
+    Optional<FileEntity> findByIdAndUserIdAndDeletedAtIsNull(UUID id, Long userId);
 
-    boolean existsByUserIdAndFolderIdAndFilenameAndDeletedAtIsNull(UUID ownerId, UUID folderId, String filename);
+    boolean existsByUserIdAndFolderIdAndFilenameAndDeletedAtIsNull(Long userId, UUID folderId, String filename);
 
     @Query(value = """
             SELECT f.* FROM files f
-            WHERE f.user_id = :ownerId
+            WHERE f.user_id = :userId
               AND f.deleted_at IS NULL
               AND f.content_tsv @@ websearch_to_tsquery('english', :query)
               AND (:folderId IS NULL OR f.folder_id = :folderId)
@@ -29,7 +29,7 @@ public interface FileRepository extends JpaRepository<FileEntity, UUID>, JpaSpec
             """,
             countQuery = """
             SELECT count(*) FROM files f
-            WHERE f.user_id = :ownerId
+            WHERE f.user_id = :userId
               AND f.deleted_at IS NULL
               AND f.content_tsv @@ websearch_to_tsquery('english', :query)
               AND (:folderId IS NULL OR f.folder_id = :folderId)
@@ -39,7 +39,7 @@ public interface FileRepository extends JpaRepository<FileEntity, UUID>, JpaSpec
             """,
             nativeQuery = true)
     Page<FileEntity> fullTextSearch(
-            @Param("userId") UUID userId,
+            @Param("userId") Long userId,
             @Param("query") String query,
             @Param("folderId") UUID folderId,
             @Param("fileExtension") String fileExtension,

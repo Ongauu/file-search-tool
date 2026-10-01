@@ -31,8 +31,8 @@ public class MinioStorageService {
     @Value("${app.minio.presigned-url-expiry-seconds}")
     private int presignedUrlExpirySeconds;
 
-    public String buildObjectKey(UUID userId, UUID fileId, String filename){
-        return "%s%s%%s".formatted(userId, fileId, filename);
+    public String buildObjectKey(Long userId, UUID fileId, String filename){
+        return "%s/%s/%s".formatted(userId, fileId, filename);
     }
 
     public String upload(String objectKey, MultipartFile file) {

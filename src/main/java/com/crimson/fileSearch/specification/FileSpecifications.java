@@ -11,8 +11,8 @@ public final class FileSpecifications {
     private FileSpecifications() {
     }
 
-    public static Specification<FileEntity> ownedBy(UUID ownerId) {
-        return (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId);
+    public static Specification<FileEntity> ownedBy(Long userId) {
+        return (root, query, cb) -> cb.equal(root.get("userId"), userId);
     }
 
     public static Specification<FileEntity> notDeleted() {
@@ -56,9 +56,9 @@ public final class FileSpecifications {
     }
 
     /** Chains every filter that is non-null, skipping the rest. */
-    public static Specification<FileEntity> build(UUID ownerId, UUID folderId, String filenameFragment,
+    public static Specification<FileEntity> build(Long userId, UUID folderId, String filenameFragment,
                                                   String extension, Instant createdAfter, Instant createdBefore) {
-        Specification<FileEntity> spec = Specification.where(ownedBy(ownerId)).and(notDeleted());
+        Specification<FileEntity> spec = Specification.where(ownedBy(userId)).and(notDeleted());
         spec = andIfPresent(spec, inFolder(folderId));
         spec = andIfPresent(spec, filenameContains(filenameFragment));
         spec = andIfPresent(spec, hasExtension(extension));

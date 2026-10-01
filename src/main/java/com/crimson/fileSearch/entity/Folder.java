@@ -21,7 +21,7 @@ public class Folder {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    private Long userId;
 
     @Column(name = "parent_id")
     private UUID parentId;

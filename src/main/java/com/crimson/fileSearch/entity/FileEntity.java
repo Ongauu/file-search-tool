@@ -21,7 +21,7 @@ public class FileEntity {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    private Long userId;
 
     @Column(name = "folder_id")
     private UUID folderId;
